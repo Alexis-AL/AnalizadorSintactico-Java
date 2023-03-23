@@ -1,0 +1,164 @@
+package codigo;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+
+
+
+terminal Identificador, Int, Char, T_dato, Suma, Multiplicacion, Resta, Division, Op_relacional, OpOr, OpAnd, Coma,
+OpNot, Igual, P_coma, Comillas, Parentesis_a, Parentesis_c, Llave_a, Llave_c, If, While, Return, Else, Main, Numero;
+
+non terminal INICIO,DEFINICIONES, DEFINICION , DEFFUNC , DEFVAR , LISTAVAR, PARAMETROS, LISTAPARAM, BLOQFUN,
+DEFLOCALES , DEFLOCAL, SENTENCIAS , SENTENCIA, OTRO , BLOQUE , VALORREGRESA , ARGUMENTOS, LISTAARGUMENTOS,
+TERMINO, LLAMADAFUNC, SENTENCIABLOQUE, EXPRESION, VACIO;
+
+start with INICIO;
+
+VACIO ::=
+;
+
+INICIO ::= 
+    DEFINICIONES
+;
+
+DEFINICIONES ::=
+    VACIO |
+    DEFINICION DEFINICIONES 
+;
+
+DEFINICION ::=
+    DEFVAR |
+    DEFFUNC
+;
+
+DEFVAR ::=
+    T_dato Identificador LISTAVAR |
+    Int Identificador LISTAVAR |
+    Char Identificador LISTAVAR 
+;
+
+LISTAVAR ::=
+    VACIO |
+    Coma Identificador LISTAVAR |
+    P_coma
+;
+
+DEFFUNC ::=
+    T_dato Identificador Parentesis_a PARAMETROS Parentesis_c BLOQFUN |
+    Int Identificador Parentesis_a PARAMETROS Parentesis_c BLOQFUN |
+    T_dato Main Parentesis_a PARAMETROS Parentesis_c BLOQFUN |
+    Int Main Parentesis_a PARAMETROS Parentesis_c BLOQFUN |
+    Char Identificador Parentesis_a PARAMETROS Parentesis_c BLOQFUN |
+    Char Main Parentesis_a PARAMETROS Parentesis_c BLOQFUN
+;
+
+PARAMETROS ::=
+    VACIO |
+    T_dato Identificador LISTAPARAM |
+    Int Identificador LISTAPARAM |
+    Char Identificador LISTAPARAM 
+
+;
+
+LISTAPARAM ::=
+    VACIO |
+    Coma T_dato Identificador LISTAPARAM |
+    Coma Int Identificador LISTAPARAM |
+    Coma Char Identificador LISTAPARAM 
+;
+
+BLOQFUN ::=
+    Llave_a DEFLOCALES Llave_c
+;
+
+DEFLOCALES ::=
+    VACIO |
+    DEFLOCAL DEFLOCALES
+;
+
+DEFLOCAL ::=
+    DEFVAR |
+    SENTENCIA
+;
+
+SENTENCIAS ::=
+    SENTENCIA SENTENCIAS |
+    SENTENCIA
+;
+
+SENTENCIA ::=
+    Identificador Igual EXPRESION P_coma |
+    If Parentesis_a EXPRESION Parentesis_c SENTENCIABLOQUE OTRO |
+    While Parentesis_a EXPRESION Parentesis_c BLOQUE |
+    Return VALORREGRESA P_coma |
+    LLAMADAFUNC P_coma
+;
+
+OTRO ::=
+    Else SENTENCIABLOQUE
+;
+
+BLOQUE ::=
+    Llave_a SENTENCIAS Llave_c
+;
+
+VALORREGRESA ::=
+    VACIO |
+    EXPRESION
+;
+
+ARGUMENTOS ::=
+    VACIO |
+    EXPRESION LISTAARGUMENTOS
+;
+
+LISTAARGUMENTOS ::=
+    VACIO |
+    Coma EXPRESION LISTAARGUMENTOS
+;
+
+TERMINO ::=
+    LLAMADAFUNC |
+    Identificador |
+    Int |
+    Char |
+    Numero
+;
+
+LLAMADAFUNC ::=
+    Identificador Parentesis_a ARGUMENTOS Parentesis_c
+;
+
+SENTENCIABLOQUE ::=
+    SENTENCIA |
+    BLOQUE 
+;
+
+EXPRESION ::=
+    Parentesis_a EXPRESION Parentesis_c|
+    Suma EXPRESION |
+    OpNot EXPRESION |
+    TERMINO Multiplicacion EXPRESION |
+    TERMINO Suma EXPRESION |
+    TERMINO Resta EXPRESION |
+    TERMINO Division EXPRESION |
+    TERMINO Op_relacional EXPRESION |
+    TERMINO Igual EXPRESION |
+    TERMINO OpAnd EXPRESION |
+    TERMINO OpOr EXPRESION |
+    TERMINO
+;
+
